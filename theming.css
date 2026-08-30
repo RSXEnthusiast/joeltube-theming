@@ -1,0 +1,568 @@
+/* ==========================================================
+   JOELTUBE theme
+   Paste into Administration > Configuration > Customization > CSS
+
+   Concept: Terminal-ish with color derived from --primary
+   ========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+/* ---------- 1. Tokens ----------
+   Everything derives from the instance's OWN theme color. We do
+   not set --primary here — PeerTube 7 defines it from your active
+   theme (Administration > Configuration > Basic, or a theme
+   plugin), and every amber helper below just tracks it. Recolor
+   the instance and this whole homepage follows; there is no color
+   hardcoded to keep in sync. The hsl() in --jk-amber is only a
+   last-ditch fallback for the impossible case of --primary being
+   unset — it is never an override.
+
+   (Pre-v7 exposed --mainColor as the knob and let --primary follow
+   it. v7 reversed that — new vars fall back to old, not the other
+   way — so we leave --mainColor alone and read --primary directly.)
+
+   --is-dark is 0 (light theme) or 1 (dark theme). We multiply
+   glow/shadow strength by it: `calc(16px * var(--is-dark))`
+   goes to 0px on light themes, so the glow never muddies a pale
+   background. This is the whole theme-awareness trick. */
+
+:root {
+  --jk-display: 'VT323', 'Courier New', monospace;
+  --input-border-radius: 2px;
+
+  /* every helper below is derived from the theme's --primary */
+  --jk-amber:    var(--primary, hsl(24, 90%, 45%));
+  --jk-glow:     color-mix(in srgb, var(--jk-amber) 60%, transparent);
+  --jk-hairline: color-mix(in srgb, var(--jk-amber) 24%, transparent);
+  --jk-tint:     color-mix(in srgb, var(--jk-amber) 12%, transparent);
+  --jk-dark:     var(--is-dark, 1);      /* 1 dark · 0 light     */
+  --jk-surface:  var(--bg-secondary, rgba(127, 127, 127, 0.06));
+
+  --jk-bk: 34px;   /* panel corner-bracket arm length            */
+  --jk-bt: 5px;    /* panel corner-bracket thickness (chunky)    */
+}
+
+/* ---------- 2. Typography ----------
+   VT323 is a pixel face: display sizes only, never body copy.
+   It ships ONE weight, so anywhere PeerTube leans on font-weight
+   to signal state, that signal dies here and gets rebuilt from
+   color instead — see §5 hover, §14 active. Never set 700 on it;
+   the browser fakes it into a smeared bold. */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--jk-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.peertube-button,
+.peertube-button-link,
+button.peertube-button,
+a.peertube-button-link {
+  font-family: var(--jk-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ---------- 3. Geometry ---------- */
+
+.video-miniature-thumbnail {
+  border-radius: 2px !important;
+}
+
+/* ---------- 4. Homepage masthead ----------
+   Hero banner: the instance banner sits behind the wordmark under a
+   black gradient wash so the text stays legible, fading into the
+   page at the bottom edge. Swap the URL to change the banner —
+   /lazy-static/banners/<uuid>.jpg is the path PeerTube serves.
+   Requires class="jk-masthead" on the masthead wrapper in the
+   homepage markup (see the snippet I gave you).
+
+   Wordmark glows like lit phosphor (dark theme only, via --jk-dark)
+   and carries a dark drop-shadow so it reads over the photo. Tagline
+   ends in a blinking block cursor — the cheapest "this is a terminal"
+   signal, and it earns its keep. */
+
+.jk-masthead {
+  position: relative;
+  margin: 0 auto 1.5rem;
+  padding: 3.75rem 1.25rem 2.5rem;
+  min-height: 210px;
+  text-align: center;
+  border-radius: 4px;
+  overflow: hidden;
+  background:
+    linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.30) 0%,
+      rgba(0, 0, 0, 0.55) 50%,
+      rgba(0, 0, 0, 0.72) 82%,
+      var(--bg) 100%),
+    url('/lazy-static/banners/5f493c3e-0bf6-49cd-9ad0-d09485ab5ca5.jpg') center / cover no-repeat;
+}
+
+.jk-masthead peertube-instance-avatar {
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
+}
+
+.jk-wordmark {
+  font-family: var(--jk-display);
+  font-size: 2.9rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0.5rem 0 0.1rem;
+  color: var(--jk-amber);
+  text-shadow:
+    0 0 calc(2px  * var(--jk-dark)) var(--jk-glow),
+    0 0 calc(18px * var(--jk-dark)) var(--jk-glow),
+    0 2px 12px rgba(0, 0, 0, 0.75);
+}
+
+.jk-tagline {
+  font-family: var(--jk-display);
+  font-size: 1.3rem;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+  margin: 0 0 1.4rem;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+}
+
+.jk-tagline::after {
+  content: '\2588';                      /* full block = cursor  */
+  margin-left: 0.28em;
+  color: var(--jk-amber);
+  opacity: 0.9;
+  animation: jk-blink 1.15s steps(1) infinite;
+}
+
+@keyframes jk-blink { 50% { opacity: 0; } }
+
+.jk-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Masthead + terminus buttons — scoped so the rest of the app's
+   buttons are left alone. Outline-amber by default; the primary
+   ones fill. Hover on either lands on a solid amber chip. */
+
+.jk-btn-row a.peertube-button-link,
+.jk-terminus a.peertube-button-link {
+  border: 1.5px solid var(--jk-amber) !important;
+  border-radius: 4px !important;
+  padding: 0.5rem 1.25rem !important;
+  color: var(--jk-amber) !important;
+  background: transparent !important;
+  transition: background-color 0.15s ease, color 0.15s ease,
+              box-shadow 0.15s ease;
+}
+
+.jk-btn-row a.peertube-button-link.primary-button,
+.jk-terminus a.peertube-button-link.primary-button {
+  background: var(--jk-amber) !important;
+  color: var(--on-primary, #111) !important;
+}
+
+.jk-btn-row a.peertube-button-link:hover,
+.jk-btn-row a.peertube-button-link:focus-visible,
+.jk-terminus a.peertube-button-link:hover,
+.jk-terminus a.peertube-button-link:focus-visible {
+  background: var(--jk-amber) !important;
+  color: var(--on-primary, #111) !important;
+  box-shadow: 0 0 calc(16px * var(--jk-dark)) var(--jk-glow);
+}
+
+/* ---------- 5. Channel header pill ----------
+   Markup: <peertube-button class="jk-ch jk-ch--<handle>" ...>
+   which Angular renders as:
+     peertube-button > div > a.peertube-button-link.secondary-button
+
+   Using a button rather than a hand-written <a> is what keeps
+   these links in the SAME TAB: the component is injected after
+   sanitizing, so DOMPurify's addHrefHook never reaches it, and
+   data-blank-target="false" makes getTarget() return ''.
+
+   The cost: a button renders label text only, so the avatar is
+   drawn with a ::before and keyed per channel in §5b below. */
+
+.jk-ch {
+  display: block;
+  width: fit-content;
+  position: relative;
+}
+
+.jk-ch a.peertube-button-link {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.75rem;
+  height: auto !important;
+  padding: 0.3rem 0.7rem 0.3rem 0.4rem !important;
+  border: 0 !important;
+  border-radius: 999px !important;                    /* shows as the tinted pill on hover only */
+  background-color: transparent !important;
+  color: inherit !important;
+  font-family: var(--jk-display);
+  font-size: 1.9rem;
+  line-height: 1;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-decoration: none !important;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* Framed avatar. The ring is amber-hairline at rest and lights
+   to full phosphor on hover, tying the avatar into the theme
+   instead of floating as a raw circle. */
+
+.jk-ch a.peertube-button-link::before {
+  content: '';
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: color-mix(in srgb, var(--fg, #888) 12%, transparent);
+  border: 2px solid var(--jk-hairline);
+  box-shadow: 0 0 0 transparent;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.jk-ch a.peertube-button-link:hover,
+.jk-ch a.peertube-button-link:focus-visible {
+  background-color: var(--jk-tint) !important;
+  color: var(--jk-amber) !important;
+  text-decoration: none !important;
+}
+
+.jk-ch a.peertube-button-link:hover::before,
+.jk-ch a.peertube-button-link:focus-visible::before {
+  border-color: var(--jk-amber);
+  box-shadow: 0 0 calc(12px * var(--jk-dark)) var(--jk-glow);
+}
+
+/* "go to channel / browse" affordance. Sits after the label and
+   is visible AT REST — not summoned on hover — so the header reads
+   as clickable before you touch it. Same-tab nav, so a plain arrow,
+   not the ↗ new-tab glyph.
+
+   The arrow is drawn in a NORMAL font, not VT323: the pixel face's
+   arrow glyph sits high in its em box, so align-items:center leaves
+   it looking un-centered against the caps. A system glyph with
+   line-height:1 centers cleanly. */
+
+.jk-ch a.peertube-button-link::after {
+  content: '\2192';                      /* →                    */
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--jk-amber);
+  opacity: 0.6;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.jk-ch a.peertube-button-link:hover::after,
+.jk-ch a.peertube-button-link:focus-visible::after {
+  opacity: 1;
+  transform: translateX(0.25em);
+}
+
+/* ---------- 5b. Per-channel avatars ----------
+   Paths pinned by uuid — if you change a channel avatar, refresh:
+     curl -s 'https://joeltube.com/api/v1/accounts/joel_kalich/video-channels?count=50' \
+       | jq -r '.data[] | "\(.name)\t\(.avatars | max_by(.width) | .path)"'      */
+
+.jk-ch--joel_kalich_ a.peertube-button-link::before {
+  background-image: url('/lazy-static/avatars/0a2f265d-e95d-4224-b2b0-b04814e6d942.jpg');
+}
+.jk-ch--joel_kalich_walks a.peertube-button-link::before {
+  background-image: url('/lazy-static/avatars/a0f3fddd-77de-4cb6-8524-57a662e5473b.png');
+}
+.jk-ch--joels_junk a.peertube-button-link::before {
+  background-image: url('/lazy-static/avatars/182e222d-cff4-4f80-8fec-33b3ce1367f2.png');
+}
+.jk-ch--menko_the_cat a.peertube-button-link::before {
+  background-image: url('/lazy-static/avatars/0706cd10-6cde-4d85-98b4-934fb7f4fc0e.png');
+}
+.jk-ch--joel_kalich_drums a.peertube-button-link::before {
+  background-image: url('/lazy-static/avatars/82bd6918-b96b-4304-a97f-3cfa8f428677.jpg');
+}
+.jk-ch--joelk111_gaming a.peertube-button-link::before {
+  background-image: url('/lazy-static/avatars/1d99226b-e36b-4fd8-9e13-6029e9a3ee11.png');
+}
+
+/* Headers with no channel avatar (Hot, Vehicles, …). No circle,
+   so lead with a small amber prompt tick instead of dead space. */
+.jk-ch--noavatar a.peertube-button-link {
+  padding: 0.3rem 0.7rem !important;
+  font-size: 1.7rem;
+}
+.jk-ch--noavatar a.peertube-button-link::before {
+  content: '\25B8';                      /* ▸ small prompt       */
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--jk-amber);
+  font-size: 1.1rem;
+  opacity: 0.75;
+}
+
+.jk-ch-tag {
+  opacity: 0.62;
+  font-size: 0.95rem;
+  margin: 0.35rem 0 1rem 0.35rem;
+}
+
+/* ---------- 6. Panels (the three acts) ----------
+   Channels · Algorithmic · Categories each live in a panel, framed
+   as a terminal viewport: a quiet perimeter hairline plus chunky
+   amber brackets on all FOUR corners. Only two pseudo-elements
+   exist and we want four corners, so the brackets are painted as
+   eight bars in one ::before overlay via layered gradients — no
+   extra markup. Radius is small so the square bracket corners sit
+   flush. Depth scales by --jk-dark so light themes stay clean.
+   Tune bracket size with --jk-bk / --jk-bt in §1. */
+
+.jk-channels-panel {
+  position: relative;
+  margin: 1.75rem auto 2.75rem;
+  padding: 1.6rem 1.6rem 0.8rem;
+  background: var(--jk-surface);
+  border: 1px solid color-mix(in srgb, var(--jk-amber) 22%, transparent);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--jk-amber) calc(14% * var(--jk-dark)), transparent),
+    0 18px 44px -28px rgba(0, 0, 0, calc(0.6 * var(--jk-dark) + 0.16));
+}
+
+.jk-channels-panel::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  filter: drop-shadow(0 0 calc(5px * var(--jk-dark)) var(--jk-glow));
+  background:
+    linear-gradient(var(--jk-amber), var(--jk-amber)) top    left  / var(--jk-bk) var(--jk-bt) no-repeat,
+    linear-gradient(var(--jk-amber), var(--jk-amber)) top    left  / var(--jk-bt) var(--jk-bk) no-repeat,
+    linear-gradient(var(--jk-amber), var(--jk-amber)) top    right / var(--jk-bk) var(--jk-bt) no-repeat,
+    linear-gradient(var(--jk-amber), var(--jk-amber)) top    right / var(--jk-bt) var(--jk-bk) no-repeat,
+    linear-gradient(var(--jk-amber), var(--jk-amber)) bottom left  / var(--jk-bk) var(--jk-bt) no-repeat,
+    linear-gradient(var(--jk-amber), var(--jk-amber)) bottom left  / var(--jk-bt) var(--jk-bk) no-repeat,
+    linear-gradient(var(--jk-amber), var(--jk-amber)) bottom right / var(--jk-bk) var(--jk-bt) no-repeat,
+    linear-gradient(var(--jk-amber), var(--jk-amber)) bottom right / var(--jk-bt) var(--jk-bk) no-repeat;
+}
+
+/* ---------- 6b. Section marker (the header you asked about) ----
+   Was: 3rem, centered, opacity .55, weight 700 — a faint word
+   that didn't function as a landmark and fake-bolded VT323.
+   Now: a left-aligned amber terminal marker. A `>` prompt, the
+   label at full strength, and a dashed rule running to the panel
+   edge — reads simultaneously as a heading and a section break. */
+
+.jk-panel-label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.15rem 0 1.2rem;
+  font-family: var(--jk-display);
+  font-size: 2rem;
+  font-weight: 400;                      /* never 700 on VT323   */
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--jk-amber);
+  opacity: 1;
+  text-shadow: 0 0 calc(12px * var(--jk-dark)) var(--jk-glow);
+}
+
+.jk-panel-label::before {
+  content: '>';
+  opacity: 0.7;
+  margin-right: 0.05em;
+}
+
+.jk-panel-label::after {
+  content: '';
+  flex: 1 1 auto;
+  height: 0;
+  margin-left: 0.5rem;
+  border-top: 1px dashed var(--jk-hairline);
+  transform: translateY(0.12em);
+}
+
+/* ---------- 7. "Most viewed" heading (containerBuilder h4) ---- */
+
+peertube-container .header > h4 {
+  font-size: 2rem;
+  letter-spacing: 0.08em;
+}
+
+/* ---------- 8. Joel+ pulse ----------
+   Retuned to an amber ring pulse and paused when the button is
+   filled on hover so the two states don't fight. */
+
+.jk-pulse a.peertube-button-link {
+  animation: jk-pulse 1.7s cubic-bezier(0.66, 0, 0, 1) infinite;
+  will-change: box-shadow;
+}
+
+.jk-pulse a.peertube-button-link:hover,
+.jk-pulse a.peertube-button-link:focus-visible {
+  animation: none;
+}
+
+@keyframes jk-pulse {
+  0%   { box-shadow: 0 0 0 0    color-mix(in srgb, var(--jk-amber) 55%, transparent); }
+  70%  { box-shadow: 0 0 0 14px transparent; }
+  100% { box-shadow: 0 0 0 0    transparent; }
+}
+
+/* ---------- 9. Video miniatures ----------
+   Give the grids some life: a small lift and an amber ring on
+   hover so a row of thumbnails reads as browsable, not static. */
+
+.video-miniature {
+  transition: transform 0.15s ease;
+}
+
+.video-miniature:hover {
+  transform: translateY(-3px);
+}
+
+.video-miniature:hover .video-miniature-thumbnail {
+  box-shadow:
+    0 0 0 2px var(--jk-amber),
+    0 10px 22px -12px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- 10. Terminus ----------
+   The scroll's end-cap and the primary "next action", so it earns
+   more presence than the masthead buttons: bigger, a soft resting
+   phosphor glow to draw the eye, and on hover it lifts as the arrow
+   slides. The arrow is a system glyph appended here — so drop the
+   "→" from the homepage label (data-label="Keep browsing"), or
+   you'll get two. */
+
+.jk-terminus {
+  margin: 1.5rem 0 4rem;
+}
+
+.jk-terminus a.peertube-button-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  font-size: 1.4rem !important;
+  padding: 0.75rem 2.2rem !important;
+  letter-spacing: 0.1em;
+  border-radius: 6px !important;
+  box-shadow: 0 0 calc(16px * var(--jk-dark)) var(--jk-glow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+              background-color 0.15s ease, color 0.15s ease;
+}
+
+.jk-terminus a.peertube-button-link::after {
+  content: '\2192';
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.jk-terminus a.peertube-button-link:hover,
+.jk-terminus a.peertube-button-link:focus-visible {
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 calc(26px * var(--jk-dark)) var(--jk-glow),
+    0 9px 20px -10px rgba(0, 0, 0, 0.5);
+}
+
+.jk-terminus a.peertube-button-link:hover::after,
+.jk-terminus a.peertube-button-link:focus-visible::after {
+  transform: translateX(0.3em);
+}
+
+/* ---------- 11. Left menu ----------
+   Short fixed labels, never wrap. Bump ~15% for VT323's small
+   x-height. */
+
+.menu-link,
+my-menu .block-title {
+  font-family: var(--jk-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ---------- 12. Page titles ---------- */
+
+.title-page {
+  font-family: var(--jk-display);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ---------- 13. Duration + numeric overlays ----------
+   VT323 is monospace: digits are the one place the face is
+   unambiguously better than the default. */
+
+.video-miniature-duration,
+.video-info-date-views,
+.views {
+  font-family: var(--jk-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- 14. Horizontal menu ----------
+   PeerTube 7+ renders this as <my-horizontal-menu>. Target the
+   component tag, not inner classes: those got renamed in the v7
+   redesign and will get renamed again.
+
+   font-size needs !important and font-family doesn't, which looks
+   arbitrary but isn't. Angular's emulated encapsulation rewrites
+   the component's own `a { font-size }` to `a[_ngcontent-xyz]` —
+   specificity (0,1,1), which beats this rule's (0,0,2) at any
+   value. font-family gets through only because the component
+   never sets it here; it inherits from body, and inherited values
+   lose to any direct match.
+
+   PeerTube also pushes type through its rfs mixin, which emits
+   font-size inside media queries. !important beats those too, but
+   check a narrow viewport before trusting it. */
+
+my-horizontal-menu a {
+  font-family: var(--jk-display);
+  font-size: 2rem !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Weight can't carry the active state on a single-weight face —
+   the browser would fake-bold it into mush. Rebuild from color. */
+
+my-horizontal-menu a.active,
+my-horizontal-menu a[aria-current] {
+  color: var(--jk-amber) !important;
+  font-weight: 400 !important;
+}
+
+/* ---------- 15. Motion opt-out ----------
+   One place for every animation so reduced-motion is a single
+   switch: cursor, pulse, hover slides all stop. */
+
+@media (prefers-reduced-motion: reduce) {
+  .jk-tagline::after,
+  .jk-pulse a.peertube-button-link { animation: none; }
+  .jk-ch a.peertube-button-link,
+  .jk-ch a.peertube-button-link::after,
+  .video-miniature,
+  .jk-btn-row a.peertube-button-link,
+  .jk-terminus a.peertube-button-link::after { transition: none; }
+}
