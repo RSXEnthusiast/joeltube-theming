@@ -1,0 +1,296 @@
+<!--
+  ============================================================
+  Paste into: Administration > Configuration > Homepage
+  ------------------------------------------------------------
+  ------------------------------------------------------------
+  PAGE SHAPE — three sections:
+
+    1. Masthead
+    2. Channel rows
+    3. Algorithmic feed
+    4. Categories
+
+  ============================================================
+-->
+
+
+<!-- ===== ACT 1 :: HEADER =================================
+     Includes flashing link to Joel+, link to my socials, and a link to the support page of JoelTube.
+     ======================================================= -->
+
+<div style="text-align:center; padding: 1.75rem 1rem 1.25rem;">
+<peertube-instance-avatar data-size="72"></peertube-instance-avatar>
+<h1 class="jk-wordmark">Welcome to JoelTube</h1>
+<p class="jk-tagline">cars · offroading · camping</p>
+
+<div class="jk-btn-row">
+<span class="jk-pulse">
+<peertube-button data-href="https://joelplus.com/#/portal/" data-blank-target="true" data-theme="primary" data-label="Join Joel+"></peertube-button>
+</span>
+<peertube-button data-href="https://joelkalich.com" data-blank-target="true" data-theme="secondary" data-label="My Socials"></peertube-button>
+<peertube-button data-href="/about/instance/support" data-blank-target="false" data-theme="primary" data-label="Support JoelTube"></peertube-button>
+</div>
+</div>
+
+
+<!-- ===== ACT 2 :: CHANNELS ===============================
+     One line for each channel including recent videos, including a clickable link to the channel with the pfp.
+     ======================================================= -->
+
+<div class="jk-channels-panel">
+<h2 class="jk-panel-label">Channels</h2>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--joel_kalich_" data-href="/c/joel_kalich_" data-blank-target="false" data-theme="secondary" data-label="Joel Kalich"></peertube-button>
+<p class="jk-ch-tag">These are my main high-effort creations, released every Friday at noon pacific time</p>
+<peertube-videos-list
+  data-channel-handle="joel_kalich_"
+  data-count="12"
+  data-max-rows="1"
+  data-sort="-publishedAt"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--joel_kalich_walks" data-href="/c/joel_kalich_walks" data-blank-target="false" data-theme="secondary" data-label="Joel Kalich Walks"></peertube-button>
+<p class="jk-ch-tag">Daily short-form videos chatting about whatever I feel like</p>
+<peertube-videos-list
+  data-channel-handle="joel_kalich_walks"
+  data-count="12"
+  data-max-rows="1"
+  data-sort="-publishedAt"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--joels_junk" data-href="/c/joels_junk" data-blank-target="false" data-theme="secondary" data-label="Joel's Junk"></peertube-button>
+<p class="jk-ch-tag">No, I will not explain this channel</p>
+<peertube-videos-list
+  data-channel-handle="joels_junk"
+  data-count="12"
+  data-max-rows="1"
+  data-sort="-publishedAt"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--menko_the_cat" data-href="/c/menko_the_cat" data-blank-target="false" data-theme="secondary" data-label="Menko the Cat"></peertube-button>
+<p class="jk-ch-tag">Menko is a cat. She's named after a beer. She has more views than all of my creations combined.</p>
+<peertube-videos-list
+  data-channel-handle="menko_the_cat"
+  data-count="12"
+  data-max-rows="1"
+  data-sort="-publishedAt"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--joel_kalich_drums" data-href="/c/joel_kalich_drums" data-blank-target="false" data-theme="secondary" data-label="Joel Kalich Drums"></peertube-button>
+<p class="jk-ch-tag">I play the drums</p>
+<peertube-videos-list
+  data-channel-handle="joel_kalich_drums"
+  data-count="12"
+  data-max-rows="1"
+  data-sort="-publishedAt"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--joelk111_gaming" data-href="/c/joelk111_gaming" data-blank-target="false" data-theme="secondary" data-label="JoelK111 Gaming"></peertube-button>
+<p class="jk-ch-tag">I sometimes upload something gaming related</p>
+<peertube-videos-list
+  data-channel-handle="joelk111_gaming"
+  data-count="12"
+  data-max-rows="1"
+  data-sort="-publishedAt"
+></peertube-videos-list>
+</peertube-container>
+
+</div>
+
+
+<!-- ===== ACT 3 :: ALGORITHMIC ============================
+     A list of all of the algorithmic sorting filters that PeerTube provides including Hot, Trending, Most Viewed, etc.
+     ======================================================= -->
+
+<div class="jk-channels-panel">
+<h2 class="jk-panel-label">Algorithmic Collections</h2>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?sort=-hot" data-blank-target="false" data-theme="secondary" data-label="Hot"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-sort="-hot"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?sort=-trending" data-blank-target="false" data-theme="secondary" data-label="Trending"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-sort="-trending"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?sort=-views" data-blank-target="false" data-theme="secondary" data-label="Most viewed"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-sort="-views"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?sort=-likes" data-blank-target="false" data-theme="secondary" data-label="Most liked"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-sort="-likes"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?sort=-comments" data-blank-target="false" data-theme="secondary" data-label="Most discussed"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-sort="-comments"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?sort=-publishedAt" data-blank-target="false" data-theme="secondary" data-label="Recent"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-sort="-publishedAt"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+</div>
+
+<!-- ===== ACT 3 :: CATEGORIES =============================
+      All of the categories that JoelTube has enabled
+     ======================================================= -->
+
+<div class="jk-channels-panel">
+<h2 class="jk-panel-label">Categories</h2>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?categoryOneOf=3" data-blank-target="false" data-theme="secondary" data-label="Vehicles"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-category-one-of="3"
+  data-sort="-publishedAt"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?categoryOneOf=6" data-blank-target="false" data-theme="secondary" data-label="Travels"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-category-one-of="6"
+  data-sort="-publishedAt"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?categoryOneOf=16" data-blank-target="false" data-theme="secondary" data-label="Animals"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-category-one-of="16"
+  data-sort="-publishedAt"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?categoryOneOf=15" data-blank-target="false" data-theme="secondary" data-label="Science & Technology"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-category-one-of="15"
+  data-sort="-publishedAt"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?categoryOneOf=1" data-blank-target="false" data-theme="secondary" data-label="Music"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-category-one-of="1"
+  data-sort="-publishedAt"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?categoryOneOf=18" data-blank-target="false" data-theme="secondary" data-label="Food"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-category-one-of="18"
+  data-sort="-publishedAt"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?categoryOneOf=7" data-blank-target="false" data-theme="secondary" data-label="Gaming"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-category-one-of="7"
+  data-sort="-publishedAt"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+<peertube-container data-layout="column">
+<peertube-button class="jk-ch jk-ch--noavatar" data-href="/videos/browse?categoryOneOf=8" data-blank-target="false" data-theme="secondary" data-label="People"></peertube-button>
+<p class="jk-ch-tag"></p>
+<peertube-videos-list
+  data-count="12"
+  data-max-rows="1"
+  data-category-one-of="8"
+  data-sort="-publishedAt"
+  data-only-local="true"
+></peertube-videos-list>
+</peertube-container>
+
+</div>
+
+<!-- Link to continue browsing via the /browse page -->
+
+<div class="jk-btn-row jk-terminus">
+<peertube-button data-href="/videos/browse?sort=-hot" data-blank-target="false" data-theme="primary" data-label="Keep browsing"></peertube-button>
+</div>
